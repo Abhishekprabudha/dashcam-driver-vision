@@ -268,7 +268,13 @@ if not info.get("ok"):
 left, right = st.columns([1.3, 1])
 with left:
     st.subheader("🎥 Driver Video")
-    st.video(str(video_path))
+    st.video(
+        str(video_path),
+        start_time=0,
+        loop=True,
+        autoplay=True,
+        muted=True,
+    )
     st.markdown(
         f"**Video info**  \\nDuration: `{info['duration']:.1f}s`  \\nResolution: `{info['width']} x {info['height']}`  \\nFPS: `{info['fps']:.2f}`"
     )
