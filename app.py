@@ -15,7 +15,7 @@ st.set_page_config(page_title="Driver Dashcam Intelligence", layout="wide")
 APP_DIR = Path(__file__).parent
 DEFAULT_VIDEO = APP_DIR / "driver_video.mp4"
 CACHE_DIR = APP_DIR / ".cache"
-CACHE_DIR.mkdir(exist_ok=True)
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @st.cache_data(show_spinner=False)
@@ -219,7 +219,6 @@ def build_demo_telemetry(duration_seconds: float, driver_df: pd.DataFrame) -> pd
     return df
 
 
-@st.cache_data(show_spinner=False)
 def parse_telemetry(uploaded_csv) -> pd.DataFrame:
     df = pd.read_csv(uploaded_csv)
     df.columns = [c.strip() for c in df.columns]
@@ -285,7 +284,7 @@ else:
 
 merged = pd.merge(driver_df, telemetry_df, on="second", how="left")
 for col in ["speed_kph", "accel_delta", "steering_deg", "brake_intensity"]:
-    merged[col] = merged[col].fillna(method="ffill").fillna(method="bfill").fillna(0)
+    merged[col] = merged[col].ffill().bfill().fillna(0)
 
 merged["harsh_brake_flag"] = (merged["brake_intensity"] >= 16).astype(int)
 merged["speeding_flag"] = (merged["speed_kph"] >= 80).astype(int)
